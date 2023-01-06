@@ -15,7 +15,7 @@ Parameters:
   BucketName:
     Description: The bucket containing static website files
     Type: String
-    Default: project2nada
+    Default: projectnada
 
 
 
@@ -40,7 +40,6 @@ Resources:
     Properties:
       ImageId: !Ref AMItoUse
       InstanceType: t2.medium
-      KeyName: vockey
       InstanceMonitoring: true
       SecurityGroups:
         - Fn::ImportValue: !Sub "${EnvironmentName}-InstanceSecurity"
@@ -59,12 +58,16 @@ Resources:
 
           systemctl start apache2.service
           systemctl enable apache2.service
+          
+          rm -rf /var/www/html/index.html
 
-          aws s3 sync s3://${BucketName} /var/www/html
+          
+
+          aws s3 cp s3://${BucketName}/index.html /var/www/html/index.html
 
           cd /var/www/html
 
-          echo "Wow! this actually works !" > index.html 
+          echo "              It works! Udagram, Udacity "  >> index.html 
 
 
 #Auto scaling group:  ##
@@ -142,7 +145,7 @@ Resources:
       Conditions:
         - Field: path-pattern
           Values:
-            - "/*"
+            - "/*"    # any pattern
       ListenerArn: !Ref LBListener
       Priority: 1
   
